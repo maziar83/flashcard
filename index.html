@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>فلش کارت انگلیسی به فارسی</title>
+    <title>فلش کارت انگلیسی به فارسی با قابلیت مرور مشکل‌دارها</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
@@ -27,7 +27,7 @@
         
         .container {
             width: 100%;
-            max-width: 800px;
+            max-width: 900px;
             background-color: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
@@ -46,6 +46,27 @@
             margin-bottom: 30px;
             font-size: 1.1rem;
             line-height: 1.6;
+        }
+        
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            background-color: #e9ecef;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
         }
         
         .upload-section {
@@ -164,12 +185,44 @@
             color: #666;
         }
         
-        .download-section {
-            margin-top: 30px;
-            padding: 20px;
-            background-color: #f8f9fa;
-            border-radius: 10px;
+        .feedback-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .feedback-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .correct-btn {
+            background: linear-gradient(to right, #56ab2f, #a8e063);
+            color: white;
+        }
+        
+        .incorrect-btn {
+            background: linear-gradient(to right, #ff512f, #dd2476);
+            color: white;
+        }
+        
+        .review-section {
             display: none;
+            margin-top: 30px;
+            text-align: center;
+        }
+        
+        .stats {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
         }
         
         .instructions {
@@ -208,13 +261,23 @@
                 width: 300px;
                 height: 200px;
             }
+            
+            .tabs {
+                flex-direction: column;
+                align-items: center;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1><i class="fas fa-language"></i> فلش کارت انگلیسی به فارسی</h1>
-        <p class="description">کارت‌های آموزشی برای یادگیری لغات انگلیسی و معادل فارسی آن‌ها</p>
+        <p class="description">سیستم پیشرفته با قابلیت مرور لغات مشکل‌دار</p>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="learn">یادگیری</div>
+            <div class="tab" data-tab="review">مرور مشکل‌دارها</div>
+        </div>
         
         <div class="instructions">
             <h3>راهنما:</h3>
@@ -223,12 +286,12 @@
                 <li>روی دکمه انتخاب فایل اکسل کلیک کنید و فایل خود را انتخاب کنید</li>
                 <li>پس از بارگذاری، کارت‌ها نمایش داده می‌شوند</li>
                 <li>روی کارت کلیک کنید تا بچرخد و ترجمه فارسی را ببینید</li>
-                <li>با دکمه‌های بعدی و قبلی بین کارت‌ها حرکت کنید</li>
-                <li>در پایان می‌توانید فایل ایندکس را دانلود کنید</li>
+                <li>با دکمه‌های "بلدم" و "نمیدونم" بازخورد دهید</li>
+                <li>از تب "مرور مشکل‌دارها" برای تمرین لغات سخت استفاده کنید</li>
             </ol>
         </div>
         
-        <div class="upload-section">
+        <div class="upload-section" id="upload-section">
             <input type="file" id="excel-file" accept=".xlsx, .xls" style="display: none;">
             <button class="upload-btn" id="upload-trigger"><i class="fas fa-file-excel"></i> انتخاب فایل اکسل</button>
             <p id="file-name" style="margin-top: 10px; color: #666;">هیچ فایلی انتخاب نشده است</p>
@@ -250,14 +313,28 @@
                 <span id="current-index">1</span> / <span id="total-cards">0</span>
             </div>
             
+            <div class="feedback-buttons">
+                <button class="feedback-btn incorrect-btn" id="incorrect-btn"><i class="fas fa-times"></i> نمیدونم</button>
+                <button class="feedback-btn correct-btn" id="correct-btn"><i class="fas fa-check"></i> بلدم</button>
+            </div>
+            
             <div class="navigation">
                 <button class="nav-btn" id="prev-btn" disabled><i class="fas fa-arrow-right"></i> قبلی</button>
                 <button class="nav-btn" id="next-btn">بعدی <i class="fas fa-arrow-left"></i></button>
             </div>
         </div>
         
-        <div class="download-section" id="download-section">
-            <button class="upload-btn" id="download-btn"><i class="fas fa-download"></i> دانلود فایل ایندکس</button>
+        <div class="review-section" id="review-section">
+            <div class="stats">
+                <h3>آمار لغات مشکل‌دار</h3>
+                <p>تعداد لغاتی که标记 کرده‌اید: <span id="difficult-count">0</span></p>
+            </div>
+            
+            <div id="review-cards-container">
+                <!-- کارت‌های مشکل‌دار اینجا نمایش داده می‌شوند -->
+            </div>
+            
+            <button class="upload-btn" id="start-review-btn" disabled>شروع مرور مشکل‌دارها</button>
         </div>
     </div>
 
@@ -267,18 +344,65 @@
             const uploadTrigger = document.getElementById('upload-trigger');
             const fileName = document.getElementById('file-name');
             const cardSection = document.getElementById('card-section');
+            const reviewSection = document.getElementById('review-section');
             const card = document.getElementById('card');
             const englishText = document.getElementById('english-text');
             const farsiText = document.getElementById('farsi-text');
             const prevBtn = document.getElementById('prev-btn');
             const nextBtn = document.getElementById('next-btn');
+            const correctBtn = document.getElementById('correct-btn');
+            const incorrectBtn = document.getElementById('incorrect-btn');
             const currentIndexSpan = document.getElementById('current-index');
             const totalCardsSpan = document.getElementById('total-cards');
-            const downloadSection = document.getElementById('download-section');
-            const downloadBtn = document.getElementById('download-btn');
+            const difficultCountSpan = document.getElementById('difficult-count');
+            const startReviewBtn = document.getElementById('start-review-btn');
+            const tabs = document.querySelectorAll('.tab');
             
             let cardsData = [];
+            let difficultCards = [];
             let currentIndex = 0;
+            
+            // بارگذاری داده‌های ذخیره شده از حافظه محلی
+            function loadSavedData() {
+                const savedDifficultCards = localStorage.getItem('difficultCards');
+                if (savedDifficultCards) {
+                    difficultCards = JSON.parse(savedDifficultCards);
+                    difficultCountSpan.textContent = difficultCards.length;
+                    startReviewBtn.disabled = difficultCards.length === 0;
+                }
+            }
+            
+            // ذخیره داده‌ها در حافظه محلی
+            function saveData() {
+                localStorage.setItem('difficultCards', JSON.stringify(difficultCards));
+                difficultCountSpan.textContent = difficultCards.length;
+                startReviewBtn.disabled = difficultCards.length === 0;
+            }
+            
+            // تغییر تب‌ها
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+                    
+                    // حذف کلاس active از همه تب‌ها
+                    tabs.forEach(t => t.classList.remove('active'));
+                    
+                    // اضافه کردن کلاس active به تب انتخاب شده
+                    this.classList.add('active');
+                    
+                    // نمایش بخش مربوطه
+                    if (tabName === 'learn') {
+                        cardSection.style.display = 'block';
+                        reviewSection.style.display = 'none';
+                        uploadSection.style.display = 'block';
+                    } else {
+                        cardSection.style.display = 'none';
+                        reviewSection.style.display = 'block';
+                        uploadSection.style.display = 'none';
+                        displayDifficultCards();
+                    }
+                });
+            });
             
             // رویداد کلیک برای دکمه آپلود
             uploadTrigger.addEventListener('click', function() {
@@ -325,7 +449,6 @@
                     
                     // نمایش بخش کارت‌ها
                     cardSection.style.display = 'block';
-                    downloadSection.style.display = 'block';
                     
                     // به روزرسانی تعداد کل کارت‌ها
                     totalCardsSpan.textContent = cardsData.length;
@@ -357,6 +480,16 @@
                 
                 // اطمینان از اینکه کارت در حالت جلو است
                 card.classList.remove('flipped');
+                
+                // بررسی آیا این کارت در لیست مشکل‌دارها است
+                const isDifficult = difficultCards.some(c => c.english === cardData.english);
+                if (isDifficult) {
+                    incorrectBtn.classList.add('active');
+                    correctBtn.classList.remove('active');
+                } else {
+                    correctBtn.classList.add('active');
+                    incorrectBtn.classList.remove('active');
+                }
             }
             
             // کلیک روی کارت برای چرخش
@@ -378,22 +511,114 @@
                 }
             });
             
-            // ایجاد و دانلود فایل ایندکس
-            downloadBtn.addEventListener('click', function() {
-                if (cardsData.length === 0) return;
+            // دکمه "بلدم"
+            correctBtn.addEventListener('click', function() {
+                const currentCard = cardsData[currentIndex];
                 
-                // ایجاد یک workbook جدید
-                const wb = XLSX.utils.book_new();
+                // حذف کارت از لیست مشکل‌دارها اگر وجود دارد
+                difficultCards = difficultCards.filter(c => c.english !== currentCard.english);
                 
-                // تبدیل داده‌ها به فرمت worksheet
-                const ws = XLSX.utils.json_to_sheet(cardsData);
+                // ذخیره تغییرات
+                saveData();
                 
-                // اضافه کردن worksheet به workbook
-                XLSX.utils.book_append_sheet(wb, ws, "Flashcards");
+                // تغییر استایل دکمه‌ها
+                correctBtn.classList.add('active');
+                incorrectBtn.classList.remove('active');
                 
-                // تولید فایل اکسل و دانلود
-                XLSX.writeFile(wb, "flashcards_index.xlsx");
+                // رفتن به کارت بعدی
+                if (currentIndex < cardsData.length - 1) {
+                    showCard(currentIndex + 1);
+                }
             });
+            
+            // دکمه "نمیدونم"
+            incorrectBtn.addEventListener('click', function() {
+                const currentCard = cardsData[currentIndex];
+                
+                // بررسی آیا کارت قبلاً در لیست مشکل‌دارها بوده یا نه
+                const alreadyAdded = difficultCards.some(c => c.english === currentCard.english);
+                
+                if (!alreadyAdded) {
+                    // اضافه کردن کارت به لیست مشکل‌دارها
+                    difficultCards.push(currentCard);
+                    
+                    // ذخیره تغییرات
+                    saveData();
+                }
+                
+                // تغییر استایل دکمه‌ها
+                incorrectBtn.classList.add('active');
+                correctBtn.classList.remove('active');
+                
+                // رفتن به کارت بعدی
+                if (currentIndex < cardsData.length - 1) {
+                    showCard(currentIndex + 1);
+                }
+            });
+            
+            // نمایش کارت‌های مشکل‌دار
+            function displayDifficultCards() {
+                const container = document.getElementById('review-cards-container');
+                container.innerHTML = '';
+                
+                if (difficultCards.length === 0) {
+                    container.innerHTML = '<p>هیچ کارتی برای مرور标记 نکرده‌اید.</p>';
+                    return;
+                }
+                
+                difficultCards.forEach((card, index) => {
+                    const cardElement = document.createElement('div');
+                    cardElement.className = 'card-item';
+                    cardElement.innerHTML = `
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 10px;">
+                            <p><strong>انگلیسی:</strong> ${card.english}</p>
+                            <p><strong>فارسی:</strong> ${card.farsi}</p>
+                            <button class="nav-btn remove-btn" data-index="${index}">حذف از مشکل‌دارها</button>
+                        </div>
+                    `;
+                    container.appendChild(cardElement);
+                });
+                
+                // اضافه کردن event listener برای دکمه‌های حذف
+                const removeButtons = document.querySelectorAll('.remove-btn');
+                removeButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const index = parseInt(this.getAttribute('data-index'));
+                        difficultCards.splice(index, 1);
+                        saveData();
+                        displayDifficultCards();
+                    });
+                });
+            }
+            
+            // شروع مرور مشکل‌دارها
+            startReviewBtn.addEventListener('click', function() {
+                if (difficultCards.length === 0) return;
+                
+                //切换到学习标签
+                tabs[0].click();
+                
+                // جایگزینی کل کارت‌ها با کارت‌های مشکل‌دار
+                const originalCards = [...cardsData];
+                cardsData = [...difficultCards];
+                
+                // نمایش اولین کارت مشکل‌دار
+                totalCardsSpan.textContent = cardsData.length;
+                showCard(0);
+                
+                // بازگرداندن کارت‌های اصلی هنگام خروج از صفحه
+                const restoreOriginalCards = function() {
+                    cardsData = originalCards;
+                    totalCardsSpan.textContent = cardsData.length;
+                };
+                
+                // اضافه کردن event listener برای تغییر تب
+                tabs[0].addEventListener('click', restoreOriginalCards, { once: true });
+                tabs[1].addEventListener('click', restoreOriginalCards, { once: true });
+            });
+            
+            // بارگذاری داده‌های ذخیره شده هنگام راه‌اندازی
+            loadSavedData();
         });
     </script>
 </body>
