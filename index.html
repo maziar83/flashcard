@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فلش کارت انگلیسی به فارسی</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #2575fc;
+            margin-bottom: 20px;
+            font-size: 2.2rem;
+        }
+        
+        .description {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        .upload-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 2px dashed #6a11cb;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+        }
+        
+        .upload-btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+        
+        .upload-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .card-section {
+            display: none;
+            margin-top: 20px;
+        }
+        
+        .card {
+            perspective: 1000px;
+            width: 350px;
+            height: 220px;
+            margin: 0 auto 30px;
+            cursor: pointer;
+        }
+        
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+        
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-front {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            color: #333;
+        }
+        
+        .card-back {
+            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+            color: #333;
+            transform: rotateY(180deg);
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .nav-btn {
+            padding: 12px 25px;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .nav-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .card-counter {
+            margin-top: 15px;
+            font-size: 1.1rem;
+            color: #666;
+        }
+        
+        .download-section {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .instructions {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: right;
+        }
+        
+        .instructions h3 {
+            color: #6a11cb;
+            margin-bottom: 10px;
+        }
+        
+        .instructions ol {
+            text-align: right;
+            padding-right: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .card {
+                width: 300px;
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-language"></i> فلش کارت انگلیسی به فارسی</h1>
+        <p class="description">کارت‌های آموزشی برای یادگیری لغات انگلیسی و معادل فارسی آن‌ها</p>
+        
+        <div class="instructions">
+            <h3>راهنما:</h3>
+            <ol>
+                <li>یک فایل اکسل با دو ستون ایجاد کنید (ستون A: لغات انگلیسی، ستون B: معادل فارسی)</li>
+                <li>روی دکمه انتخاب فایل اکسل کلیک کنید و فایل خود را انتخاب کنید</li>
+                <li>پس از بارگذاری، کارت‌ها نمایش داده می‌شوند</li>
+                <li>روی کارت کلیک کنید تا بچرخد و ترجمه فارسی را ببینید</li>
+                <li>با دکمه‌های بعدی و قبلی بین کارت‌ها حرکت کنید</li>
+                <li>در پایان می‌توانید فایل ایندکس را دانلود کنید</li>
+            </ol>
+        </div>
+        
+        <div class="upload-section">
+            <input type="file" id="excel-file" accept=".xlsx, .xls" style="display: none;">
+            <button class="upload-btn" id="upload-trigger"><i class="fas fa-file-excel"></i> انتخاب فایل اکسل</button>
+            <p id="file-name" style="margin-top: 10px; color: #666;">هیچ فایلی انتخاب نشده است</p>
+        </div>
+        
+        <div class="card-section" id="card-section">
+            <div class="card" id="card">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <p id="english-text">لغت انگلیسی</p>
+                    </div>
+                    <div class="card-back">
+                        <p id="farsi-text">معادل فارسی</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-counter">
+                <span id="current-index">1</span> / <span id="total-cards">0</span>
+            </div>
+            
+            <div class="navigation">
+                <button class="nav-btn" id="prev-btn" disabled><i class="fas fa-arrow-right"></i> قبلی</button>
+                <button class="nav-btn" id="next-btn">بعدی <i class="fas fa-arrow-left"></i></button>
+            </div>
+        </div>
+        
+        <div class="download-section" id="download-section">
+            <button class="upload-btn" id="download-btn"><i class="fas fa-download"></i> دانلود فایل ایندکس</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const excelFileInput = document.getElementById('excel-file');
+            const uploadTrigger = document.getElementById('upload-trigger');
+            const fileName = document.getElementById('file-name');
+            const cardSection = document.getElementById('card-section');
+            const card = document.getElementById('card');
+            const englishText = document.getElementById('english-text');
+            const farsiText = document.getElementById('farsi-text');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const currentIndexSpan = document.getElementById('current-index');
+            const totalCardsSpan = document.getElementById('total-cards');
+            const downloadSection = document.getElementById('download-section');
+            const downloadBtn = document.getElementById('download-btn');
+            
+            let cardsData = [];
+            let currentIndex = 0;
+            
+            // رویداد کلیک برای دکمه آپلود
+            uploadTrigger.addEventListener('click', function() {
+                excelFileInput.click();
+            });
+            
+            // پردازش فایل اکسل زمانی که کاربر فایلی انتخاب می‌کند
+            excelFileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                fileName.textContent = file.name;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const data = new Uint8Array(e.target.result);
+                    processExcelData(data);
+                };
+                reader.readAsArrayBuffer(file);
+            });
+            
+            // پردازش داده‌های اکسل
+            function processExcelData(data) {
+                try {
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    
+                    // تبدیل داده‌های اکسل به آرایه از اشیاء
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: ['english', 'farsi'] });
+                    
+                    // حذف اولین ردیف اگر شامل هدر باشد
+                    if (jsonData.length > 0 && jsonData[0].english === 'english') {
+                        jsonData.shift();
+                    }
+                    
+                    // فیلتر کردن ردیف‌های خالی
+                    cardsData = jsonData.filter(item => item.english && item.farsi);
+                    
+                    if (cardsData.length === 0) {
+                        alert('هیچ داده معتبری در فایل اکسل یافت نشد.');
+                        return;
+                    }
+                    
+                    // نمایش بخش کارت‌ها
+                    cardSection.style.display = 'block';
+                    downloadSection.style.display = 'block';
+                    
+                    // به روزرسانی تعداد کل کارت‌ها
+                    totalCardsSpan.textContent = cardsData.length;
+                    
+                    // نمایش اولین کارت
+                    showCard(0);
+                    
+                } catch (error) {
+                    console.error('Error processing Excel file:', error);
+                    alert('خطا در پردازش فایل اکسل. لطفاً از صحیح بودن فرمت فایل اطمینان حاصل کنید.');
+                }
+            }
+            
+            // نمایش کارت فعلی
+            function showCard(index) {
+                if (index < 0 || index >= cardsData.length) return;
+                
+                currentIndex = index;
+                const cardData = cardsData[index];
+                
+                englishText.textContent = cardData.english;
+                farsiText.textContent = cardData.farsi;
+                
+                currentIndexSpan.textContent = index + 1;
+                
+                // غیرفعال/فعال کردن دکمه‌های navigation
+                prevBtn.disabled = index === 0;
+                nextBtn.disabled = index === cardsData.length - 1;
+                
+                // اطمینان از اینکه کارت در حالت جلو است
+                card.classList.remove('flipped');
+            }
+            
+            // کلیک روی کارت برای چرخش
+            card.addEventListener('click', function() {
+                card.classList.toggle('flipped');
+            });
+            
+            // دکمه قبلی
+            prevBtn.addEventListener('click', function() {
+                if (currentIndex > 0) {
+                    showCard(currentIndex - 1);
+                }
+            });
+            
+            // دکمه بعدی
+            nextBtn.addEventListener('click', function() {
+                if (currentIndex < cardsData.length - 1) {
+                    showCard(currentIndex + 1);
+                }
+            });
+            
+            // ایجاد و دانلود فایل ایندکس
+            downloadBtn.addEventListener('click', function() {
+                if (cardsData.length === 0) return;
+                
+                // ایجاد یک workbook جدید
+                const wb = XLSX.utils.book_new();
+                
+                // تبدیل داده‌ها به فرمت worksheet
+                const ws = XLSX.utils.json_to_sheet(cardsData);
+                
+                // اضافه کردن worksheet به workbook
+                XLSX.utils.book_append_sheet(wb, ws, "Flashcards");
+                
+                // تولید فایل اکسل و دانلود
+                XLSX.writeFile(wb, "flashcards_index.xlsx");
+            });
+        });
+    </script>
+</body>
+</html>
